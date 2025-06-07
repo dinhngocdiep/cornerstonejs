@@ -1,0 +1,13 @@
+{
+  "version": "1.86.0",
+  "packages": [
+    "packages/adapters",
+    "packages/core",
+    "packages/tools",
+    "packages/streaming-image-volume-loader",
+    "packages/nifti-volume-loader",
+    "packages/dicomImageLoader"
+  ],
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
