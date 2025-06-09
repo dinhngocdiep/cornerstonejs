@@ -182,7 +182,38 @@ export class ImageVolume implements IImageVolume {
   public isDynamicVolume(): boolean {
     return false;
   }
-
+  /**
+   * Returns the total number of frames stored in the volume.
+   * The total number of frames is equal to the number of images for 3D volumes
+   * or the number of frames per time point for 4D volumes.
+   * @returns total number of frames per volume
+   */
+  public getTotalNumFrames(): number {
+    return this._imageIds.length;
+  }
+  /**
+   * Returns the number of frames stored in the volume.
+   * The number of frames is equal to the number of images for 3D volumes
+   * or the number of frames per time point for 4D volumes.
+   * @returns number of frames per volume
+   */
+  public getNumberFrames(): number {
+    return this.numFrames;
+  }
+  /**
+   * Returns the number of frames stored in the volume.
+   * The number of frames is equal to the number of images for 3D volumes
+   * or the number of frames per time point for 4D volumes.
+   * @returns number of frames per volume
+   */
+  public swapScalarData(fromIndex: number, toIndex: number): void {
+    if (this.isDynamicVolume() && Array.isArray(this.scalarData)) {
+      const scalarDataArrays = <PixelDataTypedArray[]>this.scalarData;
+      const temp = scalarDataArrays[fromIndex];
+      scalarDataArrays[fromIndex] = scalarDataArrays[toIndex];
+      scalarDataArrays[toIndex] = temp;
+    }
+  }
   /**
    * Return the scalar data for 3D volumes or the active scalar data
    * (current time point) for 4D volumes

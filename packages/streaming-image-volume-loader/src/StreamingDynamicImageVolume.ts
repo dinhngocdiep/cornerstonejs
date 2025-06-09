@@ -173,7 +173,28 @@ export default class StreamingDynamicImageVolume
       }
     );
   }
-
+  public swapScalarData(fromIndex: number, toIndex: number): void {
+    if (
+      this.isDynamicVolume() &&
+      fromIndex < this.numTimePoints &&
+      toIndex < this.numTimePoints
+    ) {
+      const scalarDataArrays = <Types.PixelDataTypedArray[]>this.scalarData;
+      const temp = scalarDataArrays[fromIndex];
+      scalarDataArrays[fromIndex] = scalarDataArrays[toIndex];
+      scalarDataArrays[toIndex] = temp;
+      triggerEvent(
+        eventTarget,
+        StreamingEvents.DYNAMIC_VOLUME_TIME_POINT_INDEX_CHANGED,
+        {
+          volumeId: this.volumeId,
+          timePointIndex: toIndex,
+          numTimePoints: this.numTimePoints,
+          splittingTag: this.splittingTag,
+        }
+      );
+    }
+  }
   /**
    * Returns the splitting tag used to split the imageIds in 4D volume
    */

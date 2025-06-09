@@ -31,6 +31,7 @@ function cornerstoneStreamingDynamicImageVolumeLoader(
   volumeId: string,
   options: {
     imageIds: string[];
+    scalarDataIndex?: number;
   }
 ): IVolumeLoader {
   if (!options || !options.imageIds || !options.imageIds.length) {
@@ -58,8 +59,28 @@ function cornerstoneStreamingDynamicImageVolumeLoader(
     sortedImageIdsArrays.push(volumeInfo.sortedImageIds);
     scalarDataArrays.push(volumeInfo.scalarData);
   });
-
   const sortedImageIds = sortedImageIdsArrays.flat();
+  if (
+    options.scalarDataIndex &&
+    options.scalarDataIndex > 0 &&
+    scalarDataArrays.length > options.scalarDataIndex
+  ) {
+    const temp = scalarDataArrays[options.scalarDataIndex];
+    scalarDataArrays[options.scalarDataIndex] = scalarDataArrays[0];
+    scalarDataArrays[0] = temp;
+    const numGroup = Math.round(
+      sortedImageIds.length / scalarDataArrays.length
+    );
+    let pos = options.scalarDataIndex * numGroup;
+    let tid = '';
+    for (let i = 0; i < numGroup; i++) {
+      tid = sortedImageIds[pos];
+      sortedImageIds[pos] = sortedImageIds[i];
+      sortedImageIds[i] = tid;
+      pos++;
+    }
+  }
+
   let streamingImageVolume = new StreamingDynamicImageVolume(
     // ImageVolume properties
     {

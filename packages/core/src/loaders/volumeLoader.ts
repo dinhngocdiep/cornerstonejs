@@ -39,6 +39,7 @@ import {
 
 interface VolumeLoaderOptions {
   imageIds: Array<string>;
+  scalarDataIndex?: number;
 }
 
 interface DerivedVolumeOptions {
@@ -104,7 +105,8 @@ function addScalarDataArraysToImageData(
 }
 
 function createInternalVTKRepresentation(
-  volume: IImageVolume
+  volume: IImageVolume,
+  options?: VolumeLoaderOptions
 ): vtkImageDataType {
   const { dimensions, metadata, spacing, direction, origin } = volume;
   const { PhotometricInterpretation } = metadata;
@@ -213,7 +215,7 @@ function loadVolumeFromVolumeLoader(
  */
 export function loadVolume(
   volumeId: string,
-  options: VolumeLoaderOptions = { imageIds: [] }
+  options: VolumeLoaderOptions = { imageIds: [], scalarDataIndex: 0 }
 ): Promise<IImageVolume> {
   if (volumeId === undefined) {
     throw new Error('loadVolume: parameter volumeId must not be undefined');
@@ -228,7 +230,7 @@ export function loadVolume(
   volumeLoadObject = loadVolumeFromVolumeLoader(volumeId, options);
 
   return volumeLoadObject.promise.then((volume: IImageVolume) => {
-    volume.imageData = createInternalVTKRepresentation(volume);
+    volume.imageData = createInternalVTKRepresentation(volume, options);
     return volume;
   });
 }
@@ -261,7 +263,7 @@ export async function createAndCacheVolume(
   volumeLoadObject = loadVolumeFromVolumeLoader(volumeId, options);
 
   volumeLoadObject.promise.then((volume: IImageVolume) => {
-    volume.imageData = createInternalVTKRepresentation(volume);
+    volume.imageData = createInternalVTKRepresentation(volume, options);
   });
 
   cache.putVolumeLoadObject(volumeId, volumeLoadObject).catch((err) => {

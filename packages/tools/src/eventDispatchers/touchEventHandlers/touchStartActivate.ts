@@ -31,6 +31,9 @@ export default function touchStartActivate(
 
   if (activeTool.addNewAnnotation) {
     const annotation = activeTool.addNewAnnotation(evt, 'touch');
+    if (!annotation) {
+      return;
+    }
     setAnnotationSelected(annotation.annotationUID);
   }
 }

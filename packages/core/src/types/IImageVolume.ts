@@ -90,7 +90,8 @@ interface IImageVolume {
 
   /** */
   get imageCacheOffsetMap(): Map<string, any>;
-
+  getTotalNumFrames(): number;
+  getNumberFrames(): number;
   /**
    * Mark the volume as having had the pixel data changed externally
    * which in background will re-configure the volume to use the new
@@ -98,6 +99,7 @@ interface IImageVolume {
    *
    */
   modified(): void;
+  swapScalarData(fromIndex: number, toIndex: number): void;
 }
 
 export default IImageVolume;
